@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة قارن بين الأعداد</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+        }
+
+        .question {
+            font-size: 24px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .comparison {
+            font-size: 28px;
+            font-weight: bold;
+            direction: rtl;
+        }
+
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .options button {
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .options button:hover {
+            background-color: #dcdcdc;
+        }
+
+        .options button.correct {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .options button.wrong {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .stats {
+            margin: 10px auto;
+            font-size: 18px;
+            width: 80%;
+        }
+
+        .stats p {
+            margin: 5px 0;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .controls button:hover {
+            background-color: #1976d2;
+        }
+
+        footer {
+            margin-top: 20px;
+            background-color: #2196f3;
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>لعبة قارن بين الأعداد</h1>
+        <div class="stats">
+            <p>رقم السؤال: <span id="questionCount">٠</span></p>
+            <p>الوقت المتبقي: <span id="timer">٢٠</span> ثانية</p>
+            <p>الدرجة: <span id="score">٠</span></p>
+        </div>
+        <div class="question">
+            <div id="number1" class="comparison">٠</div>
+            <div class="options">
+                <button onclick="checkAnswer('>')">&gt;</button>
+                <button onclick="checkAnswer('=')">=</button>
+                <button onclick="checkAnswer('<')">&lt;</button>
+            </div>
+            <div id="number2" class="comparison">٠</div>
+        </div>
+        <div class="controls">
+            <button onclick="startGame()">ابدأ من جديد</button>
+            <button id="pauseButton" onclick="togglePause()">إيقاف مؤقت</button>
+            <button onclick="endGame()">إنهاء اللعبة</button>
+        </div>
+    </div>
+    <div id="resultMessage" class="message hidden">
+        <h1>لعبة قارن بين الأعداد</h1>
+        <p id="finalResult"></p>
+        <button onclick="startGame()">ابدأ من جديد</button>
+    </div>
+
+    <footer>
+        <p>فكرة قناة فنون الرياضيات ـ إشراف المعلمة/سعاد الغامدي ـ تنفيذ الذكاء الاصطناعي</p>
+    </footer>
+
+    <script>
+        let score = 0;
+        let questionCount = 0;
+        let timer = 20;
+        let interval;
+        let paused = false;
+
+        function toHindiNumber(number) {
+            return number.toString().replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+        }
+
+        function getRandomNumber() {
+            const digits = Math.floor(Math.random() * 2) + 5; // Random digit count between 5 and 6
+            const base = Math.pow(10, digits - 1);
+            const range = Math.pow(10, digits) - base;
+            return base + Math.floor(Math.random() * range);
+        }
+
+        function generateQuestion() {
+            let number1 = getRandomNumber();
+            let number2;
+
+            // Ensure number2 is close to number1 (difference of 1 or 2 digits only)
+            do {
+                number2 = getRandomNumber();
+            } while (Math.abs(number1.toString().length - number2.toString().length) > 1);
+
+            document.getElementById('number1').textContent = toHindiNumber(number1);
+            document.getElementById('number2').textContent = toHindiNumber(number2);
+
+            return number1 > number2 ? '>' : number1 < number2 ? '<' : '=';
+        }
+
+        let correctAnswer;
+
+        function startGame() {
+            score = 0;
+            questionCount = 0;
+            timer = 20;
+            document.getElementById('score').textContent = toHindiNumber(score);
+            document.getElementById('questionCount').textContent = toHindiNumber(questionCount);
+            document.getElementById('timer').textContent = toHindiNumber(timer);
+            document.querySelector('.container').classList.remove('hidden');
+            document.getElementById('resultMessage').classList.add('hidden');
+            nextQuestion();
+
+            clearInterval(interval);
+            interval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            if (!paused) {
+                timer--;
+                document.getElementById('timer').textContent = toHindiNumber(timer);
+
+                if (timer <= 0) {
+                    nextQuestion();
+                }
+            }
+        }
+
+        function nextQuestion() {
+            if (paused) return; // Prevents advancing to the next question while paused
+            timer = 20;
+            questionCount++;
+            document.getElementById('questionCount').textContent = toHindiNumber(questionCount);
+            correctAnswer = generateQuestion();
+        }
+
+        function checkAnswer(answer) {
+            if (paused) return; // Prevents answering while paused
+
+            const buttons = document.querySelectorAll('.options button');
+            buttons.forEach(btn => {
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === answer) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            if (answer === correctAnswer) {
+                score++;
+                document.getElementById('score').textContent = toHindiNumber(score);
+            }
+
+            setTimeout(() => {
+                buttons.forEach(btn => btn.classList.remove('correct', 'wrong'));
+                nextQuestion();
+            }, 1000);
+        }
+
+        function togglePause() {
+            paused = !paused;
+            const pauseButton = document.getElementById('pauseButton');
+            pauseButton.textContent = paused ? 'استئناف اللعبة' : 'إيقاف مؤقت';
+        }
+
+        function endGame() {
+            clearInterval(interval);
+            document.querySelector('.container').classList.add('hidden');
+            const message = `نتيجتك: ${toHindiNumber(score)} إجابات صحيحة من أصل ${toHindiNumber(questionCount)} أسئلة.`;
+            const resultMessage = document.getElementById('finalResult');
+            resultMessage.textContent = message;
+            document.getElementById('resultMessage').classList.remove('hidden');
+        }
+
+        startGame();
+    </script>
+</body>
+
+</html>
