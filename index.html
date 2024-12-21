@@ -30,7 +30,7 @@
         }
 
         .message {
-            font-size: 24px;
+            font-size: 28px; /* تكبير حجم الخط */
             font-weight: bold;
             margin-top: 20px;
             background-color: #ffffff;
@@ -44,7 +44,7 @@
         }
 
         .question {
-            font-size: 24px;
+            font-size: 28px; /* تكبير حجم الخط */
             margin: 20px 0;
             display: flex;
             align-items: center;
@@ -54,23 +54,24 @@
         }
 
         .comparison {
-            font-size: 28px;
+            font-size: 32px; /* تكبير حجم الخط */
             font-weight: bold;
             direction: rtl;
         }
 
         .options {
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Stack buttons vertically */
+            align-items: center; /* Center buttons horizontally */
             gap: 10px;
             margin: 20px 0;
             flex-wrap: wrap;
         }
 
         .options button {
-            width: 45px;
-            height: 45px;
-            font-size: 20px;
+            width: 50px; /* تكبير حجم الأزرار */
+            height: 50px; /* تكبير حجم الأزرار */
+            font-size: 24px; /* تكبير حجم الخط */
             border: none;
             border-radius: 5px;
             background-color: #e0e0e0;
@@ -93,10 +94,13 @@
         }
 
         .stats {
+            font-size: 20px; /* تكبير حجم الخط */
             margin: 10px auto;
-            font-size: 18px;
             width: 90%;
             max-width: 600px;
+            display: flex;
+            justify-content: space-around; /* توزيع العناصر بالتساوي */
+            gap: 20px; /* مسافة مناسبة بين العناصر */
         }
 
         .stats p {
@@ -111,8 +115,8 @@
         }
 
         .controls button {
+            font-size: 18px; /* تكبير حجم الخط */
             padding: 10px 20px;
-            font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -127,11 +131,11 @@
         }
 
         footer {
+            font-size: 16px; /* تكبير حجم الخط */
             margin-top: 20px;
             background-color: #2196f3;
             color: white;
             padding: 10px;
-            font-size: 14px;
             width: 100%;
         }
 
@@ -158,6 +162,12 @@
             footer {
                 font-size: 12px;
             }
+
+            .difficulty button {
+                padding: 8px 16px;
+                font-size: 14px;
+                max-width: 150px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -179,6 +189,41 @@
             .stats {
                 font-size: 14px;
             }
+
+            .difficulty button {
+                font-size: 12px;
+                max-width: 100px;
+            }
+        }
+
+        .difficulty {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .difficulty button {
+            font-size: 18px; /* تكبير حجم الخط */
+            padding: 10px 20px; /* تعديل حجم الأزرار */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ff9800;
+            color: white;
+            flex: 1;
+            max-width: 150px; /* تعديل حجم الأزرار */
+        }
+
+        .difficulty button:hover {
+            background-color: #f57c00;
+        }
+
+        h1 {
+            background-color: #ffeb3b; /* لون الخلفية */
+            padding: 10px; /* مسافة داخلية */
+            border-radius: 5px; /* حواف مستديرة */
         }
     </style>
 </head>
@@ -190,6 +235,11 @@
             <p>رقم السؤال: <span id="questionCount">٠</span></p>
             <p>الوقت المتبقي: <span id="timer">٢٠</span> ثانية</p>
             <p>الدرجة: <span id="score">٠</span></p>
+        </div>
+        <div class="difficulty">
+            <button onclick="setDifficulty('easy')">سهل</button>
+            <button onclick="setDifficulty('medium')">متوسط</button>
+            <button onclick="setDifficulty('hard')">صعب</button>
         </div>
         <div class="question">
             <div id="number1" class="comparison">٠</div>
@@ -222,13 +272,30 @@
         let timer = 20;
         let interval;
         let paused = false;
+        let difficulty = 'medium';
+
+        function setDifficulty(level) {
+            difficulty = level;
+            startGame();
+        }
 
         function toHindiNumber(number) {
             return number.toString().replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
         }
 
         function getRandomNumber() {
-            const digits = Math.floor(Math.random() * 2) + 5; // Random digit count between 5 and 6
+            let digits;
+            switch (difficulty) {
+                case 'easy':
+                    digits = Math.floor(Math.random() * 2) + 3; // 3 to 4 digits
+                    break;
+                case 'medium':
+                    digits = Math.floor(Math.random() * 2) + 5; // 5 to 6 digits
+                    break;
+                case 'hard':
+                    digits = Math.floor(Math.random() * 2) + 7; // 7 to 8 digits
+                    break;
+            }
             const base = Math.pow(10, digits - 1);
             const range = Math.pow(10, digits) - base;
             return base + Math.floor(Math.random() * range);
@@ -254,7 +321,7 @@
         function startGame() {
             score = 0;
             questionCount = 0;
-            timer = 20;
+            timer = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 20 : 10;
             document.getElementById('score').textContent = toHindiNumber(score);
             document.getElementById('questionCount').textContent = toHindiNumber(questionCount);
             document.getElementById('timer').textContent = toHindiNumber(timer);
@@ -279,7 +346,7 @@
 
         function nextQuestion() {
             if (paused) return; // Prevents advancing to the next question while paused
-            timer = 20;
+            timer = difficulty === 'easy' ? 30 : difficulty === 'medium' ? 20 : 10;
             questionCount++;
             document.getElementById('questionCount').textContent = toHindiNumber(questionCount);
             correctAnswer = generateQuestion();
