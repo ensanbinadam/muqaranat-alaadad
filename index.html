@@ -16,12 +16,12 @@
 
         .container {
             margin: 20px auto;
-            padding: 10px;
+            padding: 20px;
             background-color: #ffffff;
             border: 2px solid #ccc;
             border-radius: 10px;
-            width: 95%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 600px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
@@ -30,31 +30,31 @@
         }
 
         .message {
-            font-size: 1.2rem;
+            font-size: 24px;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 20px;
             background-color: #ffffff;
-            padding: 10px;
+            padding: 20px;
             border: 2px solid #ccc;
             border-radius: 10px;
-            width: 95%;
-            max-width: 500px;
+            width: 90%;
+            max-width: 600px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin: 10px auto;
+            margin: 20px auto;
         }
 
         .question {
-            font-size: 1rem;
-            margin: 10px 0;
+            font-size: 24px;
+            margin: 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .comparison {
-            font-size: 1.5rem;
+            font-size: 28px;
             font-weight: bold;
             direction: rtl;
         }
@@ -62,15 +62,15 @@
         .options {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            margin: 10px 0;
+            gap: 15px;
+            margin: 20px 0;
             flex-wrap: wrap;
         }
 
         .options button {
-            width: 40px;
-            height: 40px;
-            font-size: 1.2rem;
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
             border: none;
             border-radius: 5px;
             background-color: #e0e0e0;
@@ -94,9 +94,9 @@
 
         .stats {
             margin: 10px auto;
-            font-size: 0.9rem;
-            width: 95%;
-            max-width: 500px;
+            font-size: 18px;
+            width: 90%;
+            max-width: 600px;
         }
 
         .stats p {
@@ -106,18 +106,20 @@
         .controls {
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 15px;
             flex-wrap: wrap;
         }
 
         .controls button {
-            padding: 5px 10px;
-            font-size: 0.9rem;
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             background-color: #2196f3;
             color: white;
+            flex: 1;
+            max-width: 150px;
         }
 
         .controls button:hover {
@@ -125,48 +127,57 @@
         }
 
         footer {
-            margin-top: 10px;
+            margin-top: 20px;
             background-color: #2196f3;
             color: white;
-            padding: 5px;
-            font-size: 0.9rem;
+            padding: 10px;
+            font-size: 14px;
+            width: 100%;
         }
 
-        @media (min-width: 768px) {
-
-            .container,
-            .message,
-            .stats {
-                width: 80%;
-            }
-
-            .question {
-                font-size: 1.2rem;
-            }
-
+        @media (max-width: 768px) {
             .options button {
                 width: 50px;
                 height: 50px;
-                font-size: 1.5rem;
+                font-size: 24px;
+            }
+
+            .controls button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .comparison {
+                font-size: 24px;
+            }
+
+            .stats {
+                font-size: 16px;
+            }
+
+            footer {
+                font-size: 12px;
             }
         }
 
-        @media (min-width: 1024px) {
-
-            .container,
-            .message,
-            .stats {
-                width: 60%;
-            }
-
-            .question {
-                font-size: 1.5rem;
-            }
-
+        @media (max-width: 480px) {
             .options button {
-                width: 60px;
-                height: 60px;
-                font-size: 1.7rem;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+
+            .controls button {
+                font-size: 12px;
+                max-width: 100px;
+            }
+
+            .comparison {
+                font-size: 20px;
+            }
+
+            .stats {
+                font-size: 14px;
             }
         }
     </style>
@@ -297,23 +308,23 @@
             }, 1000);
         }
 
-                            function togglePause() {
-                                paused = !paused;
-                                const pauseButton = document.getElementById('pauseButton');
-                                pauseButton.textContent = paused ? 'استئناف اللعبة' : 'إيقاف مؤقت';
-                            }
+        function togglePause() {
+            paused = !paused;
+            const pauseButton = document.getElementById('pauseButton');
+            pauseButton.textContent = paused ? 'استئناف اللعبة' : 'إيقاف مؤقت';
+        }
 
-                            function endGame() {
-                                clearInterval(interval);
-                                document.querySelector('.container').classList.add('hidden');
-                                const message = `نتيجتك: ${toHindiNumber(score)} إجابات صحيحة من أصل ${toHindiNumber(questionCount)} أسئلة.`;
-                                const resultMessage = document.getElementById('finalResult');
-                                resultMessage.textContent = message;
-                                document.getElementById('resultMessage').classList.remove('hidden');
-                            }
+        function endGame() {
+            clearInterval(interval);
+            document.querySelector('.container').classList.add('hidden');
+            const message = `نتيجتك: ${toHindiNumber(score)} إجابات صحيحة من أصل ${toHindiNumber(questionCount)} أسئلة.`;
+            const resultMessage = document.getElementById('finalResult');
+            resultMessage.textContent = message;
+            document.getElementById('resultMessage').classList.remove('hidden');
+        }
 
-                            startGame();
-                        </script>
-    </body>
-    
-    </html>
+        startGame();
+    </script>
+</body>
+
+</html>
