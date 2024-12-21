@@ -44,7 +44,7 @@
         }
 
         .question {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             margin: 20px 0;
             display: flex;
             align-items: center;
@@ -140,6 +140,10 @@
                 width: 70%;
             }
 
+            .question {
+                font-size: 1.5rem;
+            }
+
             .options button {
                 width: 70px;
                 height: 70px;
@@ -153,6 +157,10 @@
             .message,
             .stats {
                 width: 50%;
+            }
+
+            .question {
+                font-size: 2rem;
             }
 
             .options button {
@@ -290,8 +298,8 @@
         }
 
         function togglePause() {
-            paused = !paused;
-            const pauseButton = document.getElementById('pauseButton');
+                paused = !paused;
+                                const pauseButton = document.getElementById('pauseButton');
                                 pauseButton.textContent = paused ? 'استئناف اللعبة' : 'إيقاف مؤقت';
                             }
 
